@@ -19,23 +19,23 @@ class CheckoutController extends Controller
 {
     protected $orderModel;
     protected $paymentModel;
-    protected $orderReceipt;
-    protected $adminOrderNotification;
-    protected $testNotification;
+    // protected $orderReceipt;
+    // protected $adminOrderNotification;
+    // protected $testNotification;
 
     // Constructor Dependency Injection
     public function __construct(
         Order $order,
         Payment $payment,
-        OrderReceipt $orderReceipt,
-        AdminOrderNotification $adminOrderNotification,
-        TestNotification $testNotification
+        // OrderReceipt $orderReceipt,
+        // AdminOrderNotification $adminOrderNotification,
+        // TestNotification $testNotification
     ) {
         $this->orderModel = $order;
         $this->paymentModel = $payment;
-        $this->orderReceipt = $orderReceipt;
-        $this->adminOrderNotification = $adminOrderNotification;
-        $this->testNotification = $testNotification;
+        // $this->orderReceipt = $orderReceipt;
+        // $this->adminOrderNotification = $adminOrderNotification;
+        // $this->testNotification = $testNotification;
     }
 
     public function index()
@@ -157,14 +157,14 @@ class CheckoutController extends Controller
             }
 
             // Send email to user
-            Mail::to($user->email)->send($this->orderReceipt);
+            Mail::to($user->email)->send(new OrderReceipt($order));
 
             // Send email to admin
             $adminEmail = 'ralphdaher6@gmail.com'; // Replace with the actual admin email address
-            Mail::to($adminEmail)->send($this->adminOrderNotification);
+            Mail::to($adminEmail)->send(new AdminOrderNotification($order));
 
             // Dispatch the event with the post data
-            event(new $this->testNotification([
+            event(new TestNotification([
                 'orderId' => $order->id,
                 'message' => "New Order!",
             ]));

@@ -24,97 +24,99 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
-// Route::get('/index', function () {return view('user/index');})->name('home');
-Route::get('/index', [HomeController::class, 'index'])->name('home');
-Route::get('/shop', [UserProductController::class, 'index'])->name('shop');
-Route::get('/promotion', [PromotionController::class, 'index'])->name('promotion');
-Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-Route::post('/contact/send', [ContactController::class, 'sendContactForm'])->name('contact.send');
-Route::get('/products/{category_name}/{product_id}', [UserProductController::class, 'viewProduct'])->name('viewProductUser');
-
-Route::middleware([CheckLoggedIn::class])->group(function () {
-    Route::get('/orders', [UserOrderController::class, 'index'])->name('orders.view');
-    Route::get('/order/{order_id}', [UserOrderController::class, 'showOrderDetails'])->name('order.details');
-    Route::delete('/order/{order_id}', [UserOrderController::class, 'cancelOrder'])->name('order.cancel');
-    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-    Route::post('/cart/increase/{product_id}', [CartController::class, 'increaseQuantity'])->name('cart.increase');
-    Route::post('/cart/decrease/{product_id}', [CartController::class, 'decreaseQuantity'])->name('cart.decrease');
-    Route::delete('/cart/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index')->middleware(CheckCartCount::class);
-    Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process')->middleware(CheckCartCount::class);
-    Route::post('/checkout/payment', [CheckoutController::class, 'handlePayment'])->name('checkout.handlePayment')->middleware(CheckCheckoutData::class);
-});
-
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ])->group(function () {
-//     Route::get('/index', [HomeController::class, 'index'])->name('home');
-// });
-
 Route::get('auth/google', [GoogleAuthController::class, 'redirect'])->name('google-auth');
 Route::get('auth/google/call-back', [GoogleAuthController::class, 'callbackGoogle']);
 
+// NO LOGIN NEEDED // NO MIDDLEWARE
+// Home Page
+Route::get('/index', [HomeController::class, 'index'])->name('home');
+
+// Shop Page
+Route::get('/shop', [UserProductController::class, 'index'])->name('shop');
+
+// Promotion Page
+Route::get('/promotion', [PromotionController::class, 'index'])->name('promotion');
+
+// Contect Page
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact/send', [ContactController::class, 'sendContactForm'])->name('contact.send');
+
+// Product Details Page
+Route::get('/products/{category_name}/{product_id}', [UserProductController::class, 'viewProduct'])->name('viewProductUser');
+
+
+// Authentication REQUIRED!
+Route::middleware([CheckLoggedIn::class])->group(function () {
+    // View all orders
+    Route::get('/orders', [UserOrderController::class, 'index'])->name('orders.view');
+    // View order details
+    Route::get('/order/{order_id}', [UserOrderController::class, 'showOrderDetails'])->name('order.details');
+    // Delete order
+    Route::delete('/order/{order_id}', [UserOrderController::class, 'cancelOrder'])->name('order.cancel');
+
+    // Add to cart
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    // View cart
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    // Increase / Decrease product quantity in cart
+    Route::post('/cart/increase/{product_id}', [CartController::class, 'increaseQuantity'])->name('cart.increase');
+    Route::post('/cart/decrease/{product_id}', [CartController::class, 'decreaseQuantity'])->name('cart.decrease');
+    // Remove product from cart
+    Route::delete('/cart/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove');
+
+    // Go to checkout page with everything in the current cart // can't be bypassed, CheckCartCount MIDDLEWARE (if nothing in cart go back to shopping)
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index')->middleware(CheckCartCount::class);
+    // Process the checkout
+    Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process')->middleware(CheckCartCount::class);
+
+    // Go to the stripe payment // can't be bypassed, CheckCheckoutData MIDDLEWARE (if session doesn't have "checkout data" you go back to checkout page)
+    Route::post('/checkout/payment', [CheckoutController::class, 'handlePayment'])->name('checkout.handlePayment')->middleware(CheckCheckoutData::class);
+});
+
 Route::middleware([CheckAdmin::class])->group(function () {
-    // basic view getters
+    // Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('adminDashboard');
 
     // Users
-    // Read
     Route::get('/admin/users', [UserController::class, 'index'])->name('adminUsers');
 
     // products CRUD
-    // Create
-    Route::get('/admin/products/add', [ProductController::class, 'addProductForm'])->name('addProductForm');
-    Route::post('/admin/products/add', [ProductController::class, 'addProduct'])->name('addProduct');
-
-    // Read
     Route::get('/admin/products', [ProductController::class, 'index'])->name('adminProducts');
     Route::get('/admin/products/view_product/{product_id}', [ProductController::class, 'viewProduct'])->name('viewProduct');
 
-    // Update
+    Route::get('/admin/products/add', [ProductController::class, 'addProductForm'])->name('addProductForm');
+    Route::post('/admin/products/add', [ProductController::class, 'addProduct'])->name('addProduct');
+
     Route::get('/admin/products/edit_product/{product_id}', [ProductController::class, 'editProductForm'])->name('editProductForm');
     Route::put('/admin/products/edit_product/{product_id}', [ProductController::class, 'editProduct'])->name('editProduct');
-
-    // Delete
+    
     Route::delete('/admin/products/delete/{product_id}', [ProductController::class, 'deleteProduct'])->name('deleteProduct');
 
     // categories CRUD
-    // Create
     Route::get('/admin/categories/add', [CategoryController::class, 'addCategoryForm'])->name('addCategoryForm');
     Route::post('/admin/categories/add', [CategoryController::class, 'addCategory'])->name('addCategory');
 
-    //Read
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('adminCategories');
 
-    // Update
     Route::get('/admin/categories/edit_category/{category_id}', [CategoryController::class, 'editCategoryForm'])->name('editCategoryForm');
     Route::put('/admin/categories/edit_category/{category_id}', [CategoryController::class, 'editCategory'])->name('editCategory');
 
-    // Delete
     Route::delete('/admin/categories/delete/{category_id}', [CategoryController::class, 'deleteCategory'])->name('deleteCategory');
 
     // order CRUD
-    // Create
-    // USER SIDE
+    // Create "USER SIDE"
 
-    // Read
     Route::get('/admin/orders', [OrderController::class, 'index'])->name('adminOrders');
     Route::get('/admin/orders/{order_id}', [OrderController::class, 'orderDetails'])->name('orderDetails');
 
-    // Update
     Route::put('/admin/orders/{order_id}/markOrderDelivered', [OrderController::class, 'markOrderDelivered'])->name('markOrderDelivered');
     Route::put('/admin/orders/{order_id}/markOrderPending', [OrderController::class, 'markOrderPending'])->name('markOrderPending');
     Route::put('/admin/orders/{order_id}/markPaymentPaid', [OrderController::class, 'markPaymentPaid'])->name('markPaymentPaid');
     Route::put('/admin/orders/{order_id}/markPaymentPending', [OrderController::class, 'markPaymentPending'])->name('markPaymentPending');
 
-    // Delete
     Route::delete('/admin/orders/{order_id}/deleteOrder', [OrderController::class, 'cancelOrder'])->name('cancelOrder');
 
     // Payment
-    // Read
     Route::get('/admin/payments', [PaymentController::class, 'index'])->name('adminPayments');
 
 });
