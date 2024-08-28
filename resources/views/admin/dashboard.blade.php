@@ -11,7 +11,7 @@
                     <i class="fa fa-chart-line fa-3x text-primary"></i>
                     <div class="ms-3">
                         <p class="mb-2">Today Sale</p>
-                        <h6 class="mb-0">$1234</h6>
+                        <h6 class="mb-0">${{ $totalSales }}</h6>
                     </div>
                 </div>
             </div>
@@ -20,10 +20,30 @@
                     <i class="fa fa-chart-bar fa-3x text-primary"></i>
                     <div class="ms-3">
                         <p class="mb-2">Total Sale</p>
-                        <h6 class="mb-0">$1234</h6>
+                        <h6 class="mb-0">${{ $todaySales }}</h6>
                     </div>
                 </div>
             </div>
+
+            
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-user-check fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Total Sign-ups</p>
+                        <h6 class="mb-0">{{ $totalSignUps }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-calendar-day fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Today Sign-ups</p>
+                        <h6 class="mb-0">{{ $todaySignUps }}</h6>
+                    </div>
+                </div>
+            </div>            
         </div>
     </div>
     <!-- Sale & Revenue End -->
@@ -33,101 +53,80 @@
         <div class="bg-light text-center rounded p-4">
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <h6 class="mb-0">Recent Orders</h6>
-                <a href="">Show All</a>
+                <a href="{{ route('adminOrders') }}">Show All</a>
             </div>
             <div class="table-responsive">
-                <table class="table text-start align-middle table-bordered table-hover mb-0">
-                    <thead>
-                        <tr class="text-dark">
-                            <th scope="col"><input class="form-check-input" type="checkbox"></th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Invoice</th>
-                            <th scope="col">Customer</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Delivery Status</th>
-                            <th scope="col">Payment Status</th>
-                            <th scope="col">Payment Type</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Delivered</td>
-                            <td>Paid</td>
-                            <td>Cash on delivery</td>
-                            <td>
-                                <a class="btn btn-sm btn-primary m-1" href="">Detail</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Delivery Pending</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Payment Pending</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Delivered</td>
-                            <td>Paid</td>
-                            <td>Card</td>
-                            <td>
-                                <a class="btn btn-sm btn-primary m-1" href="">Detail</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Delivery Pending</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Payment Pending</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Delivered</td>
-                            <td>Pending</td>
-                            <td>Card</td>
-                            <td>
-                                <a class="btn btn-sm btn-primary m-1" href="">Detail</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Delivery Pending</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Payment Paid</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Pending</td>
-                            <td>Pending</td>
-                            <td>Cash on delivery</td>
-                            <td>
-                                <a class="btn btn-sm btn-primary m-1" href="">Detail</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Delivery Delivered</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Payment Paid</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>01 Jan 2045</td>
-                            <td>INV-0123</td>
-                            <td>Jhon Doe</td>
-                            <td>$123</td>
-                            <td>Pending</td>
-                            <td>Paid</td>
-                            <td>Card</td>
-                            <td>
-                                <a class="btn btn-sm btn-primary m-1" href="">Detail</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Delivery Delivered</a>
-                                <a class="btn btn-sm btn-danger m-1" href="">Mark Payment Pending</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                @if ($orders->isEmpty())
+                    <h1>No Orders</h1>
+                @else
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Invoice</th>
+                                <th scope="col">Payment Type</th>
+                                <th scope="col">Payment Status</th>
+                                <th scope="col">Order Status</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($orders as $order)
+                                <tr>
+                                    <th scope="row">{{ $order->id }}</th>
+                                    <td>{{ $order->total_amount }}</td>
+                                    <td>{{ $order->invoice }}</td>
+                                    @if ($order->payment_type=='credit_card')
+                                        <td>Card</td>
+                                    @else
+                                        <td>Cash On Delivery</td>
+                                    @endif
+                                    <td>{{ $order->payment_status }}</td>
+                                    <td>{{ $order->order_status }}</td>
+                                    <td>{{ $order->user->name }}</td>
+                                    <td>
+                                        <a class="btn btn-sm btn-primary m-1" href="{{ route('orderDetails', ['order_id' => $order->id]) }}">Detail</a>
+                                        <a class="btn btn-sm btn-primary m-1" href="https://www.google.com/maps?q={{ $order->location_lat }},{{ $order->location_lng }}" target="_blank">View on Maps</a>
+                                        @if ($order->order_status == 'Delivered')
+                                        <form action="{{ route('markOrderPending', ['order_id' => $order->id]) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-primary m-1">Mark Order Pending</button>
+                                        </form>
+                                        @else
+                                            <form action="{{ route('markOrderDelivered', ['order_id' => $order->id]) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-sm btn-primary m-1">Mark Order Delivered</button>
+                                            </form>
+                                        @endif
+                                        
+                                        @if ($order->payment_status == 'Paid')
+                                            <form action="{{ route('markPaymentPending', ['order_id' => $order->id]) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-sm btn-primary m-1">Mark Payment Pending</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('markPaymentPaid', ['order_id' => $order->id]) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-sm btn-primary m-1">Mark Payment Paid</button>
+                                            </form>
+                                        @endif
+                                        <form action="{{ route('cancelOrder', ['order_id' => $order->id]) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger m-1">Cancel Order</button>
+                                        </form>   
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
         </div>
     </div>
@@ -141,7 +140,6 @@
                 <div class="h-100 bg-light rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-0">Calender</h6>
-                        <a href="">Show All</a>
                     </div>
                     <div id="calender"></div>
                 </div>

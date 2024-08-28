@@ -29,11 +29,11 @@ class FortifyServiceProvider extends ServiceProvider
             public function toResponse($request)
             {
                 if(Auth::user()->user_type=="user"){
-                    return redirect('/');
+                    return redirect()->route('home');
                 }elseif(Auth::user()->user_type=="admin"){
-                    return redirect('/admin/dashboard');
+                    return redirect()->route('adminDashboard');
                 }else{
-                    return redirect('/login');
+                    return redirect()->route('login');
                 }
             }
         });

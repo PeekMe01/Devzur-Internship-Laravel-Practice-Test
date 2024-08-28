@@ -41,7 +41,20 @@
 
     <!-- Template Stylesheet -->
     <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
     @stack('styles')
+
+    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('user/styles/bootstrap4/bootstrap.min.css') }}">
+    <link href="{{ asset('user/plugins/font-awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('user/plugins/OwlCarousel2-2.2.1/owl.carousel.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('user/plugins/OwlCarousel2-2.2.1/owl.theme.default.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('user/plugins/OwlCarousel2-2.2.1/animate.css') }}">
+    <link rel="stylesheet" href="{{ asset('user/plugins/themify-icons/themify-icons.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('user/plugins/jquery-ui-1.12.1.custom/jquery-ui.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('user/styles/single_styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('user/styles/single_responsive.css') }}"> --}}
+
 </head>
 
 <body>
@@ -74,6 +87,45 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        @if (Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}"
+            switch (type) {
+                case 'info':
+
+                    toastr.options.timeOut = 10000;
+                    toastr.info("{{ Session::get('message') }}");
+                    var audio = new Audio('audio.mp3');
+                    audio.play();
+                    break;
+                case 'success':
+
+                    toastr.options.timeOut = 10000;
+                    toastr.success("{{ Session::get('message') }}");
+                    var audio = new Audio('audio.mp3');
+                    audio.play();
+
+                    break;
+                case 'warning':
+
+                    toastr.options.timeOut = 10000;
+                    toastr.warning("{{ Session::get('message') }}");
+                    var audio = new Audio('audio.mp3');
+                    audio.play();
+
+                    break;
+                case 'error':
+
+                    toastr.options.timeOut = 10000;
+                    toastr.error("{{ Session::get('message') }}");
+                    var audio = new Audio('audio.mp3');
+                    audio.play();
+
+                    break;
+            }
+        @endif
+    </script>
     <script src="{{ asset('admin/lib/chart/chart.min.js') }}"></script>
     <script src="{{ asset('admin/lib/easing/easing.min.js') }}"></script>
     <script src="{{ asset('admin/lib/waypoints/waypoints.min.js') }}"></script>
@@ -82,9 +134,50 @@
     <script src="{{ asset('admin/lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
     <script src="{{ asset('admin/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 
+    {{-- <script src="{{ asset('user/js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('user/styles/bootstrap4/popper.js') }}"></script>
+    <script src="{{ asset('user/styles/bootstrap4/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('user/plugins/Isotope/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('user/plugins/OwlCarousel2-2.2.1/owl.carousel.js') }}"></script>
+    <script src="{{ asset('user/plugins/easing/easing.js') }}"></script>
+    <script src="{{ asset('user/plugins/jquery-ui-1.12.1.custom/jquery-ui.js') }}"></script>
+    <script src="{{ asset('user/js/single_custom.js') }}"></script> --}}
+
     <!-- Template Javascript -->
     <script src="{{ asset('admin/js/main.js') }}"></script>
     @stack('scripts')
 </body>
-
 </html>
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('2a8e080d80bfd51a4e2a', {
+      cluster: 'eu'
+    });
+
+    var channel = pusher.subscribe('notification');
+    channel.bind('test.notification', function(data) {
+        const buttonHtml = `<a class="btn btn-sm btn-primary m-1" href="/admin/orders/${data.orderId}">Detail</a>`;
+        toastr.info(data.message + buttonHtml, 'Notification Title', {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: 5000, // Time in milliseconds
+            allowHtml: true
+        });
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
+</body>

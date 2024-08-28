@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->integer('quantity')->default(0);
-            $table->json('images')->nullable(); // Store images as JSON array
+            $table->json('images'); // Store images as JSON array
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
