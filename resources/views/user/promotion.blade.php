@@ -149,7 +149,7 @@
                                         <div class="product-item {{ $product->category->name }}">
                                             <div class="product discount product_filter">
                                                 <div class="product_image">
-                                                    <img src="{{ $product->images[0] }}" alt="Product Image">
+                                                    <img src="{{ $product->images[0] }}" height="200px" style="object-fit: contain" alt="Product Image">
                                                 </div>
                                                 {{-- <div class="favorite favorite_left"></div> --}}
                                                 @if($product->discounted_price && $product->price > $product->discounted_price)
