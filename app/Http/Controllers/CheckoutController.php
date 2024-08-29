@@ -13,12 +13,14 @@ use Stripe\Charge;
 use App\Mail\OrderReceipt;
 use App\Mail\AdminOrderNotification;
 use App\Events\TestNotification;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
     protected $orderModel;
     protected $paymentModel;
+    protected $userModel;
     // protected $orderReceipt;
     // protected $adminOrderNotification;
     // protected $testNotification;
@@ -27,12 +29,14 @@ class CheckoutController extends Controller
     public function __construct(
         Order $order,
         Payment $payment,
+        User $user,
         // OrderReceipt $orderReceipt,
         // AdminOrderNotification $adminOrderNotification,
         // TestNotification $testNotification
     ) {
         $this->orderModel = $order;
         $this->paymentModel = $payment;
+        $this->userModel = $user;
         // $this->orderReceipt = $orderReceipt;
         // $this->adminOrderNotification = $adminOrderNotification;
         // $this->testNotification = $testNotification;
@@ -160,8 +164,12 @@ class CheckoutController extends Controller
             Mail::to($user->email)->send(new OrderReceipt($order));
 
             // Send email to admin
-            $adminEmail = 'ralphdaher6@gmail.com'; // Replace with the actual admin email address
-            Mail::to($adminEmail)->send(new AdminOrderNotification($order));
+            // Retrieve all users with user_type 'admin'
+            $admins = $this->userModel::where('user_type', 'admin')->get();
+
+            foreach ($admins as $admin) {
+                Mail::to($admin->email)->send(new AdminOrderNotification($order));
+            }
 
             // Dispatch the event with the post data
             event(new TestNotification([

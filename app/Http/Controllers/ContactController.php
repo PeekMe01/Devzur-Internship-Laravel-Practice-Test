@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactFormMail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -20,7 +21,11 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
     
-        Mail::to('ralphdaher6@gmail.com')->send(new ContactFormMail($validatedData));
+        $admins = User::where('user_type', 'admin')->get();
+
+        foreach ($admins as $admin) {
+            Mail::to($admin->email)->send(new ContactFormMail($validatedData));
+        }
     
         return redirect()->back()->with('success', 'Message sent successfully!');
     }
